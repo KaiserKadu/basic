@@ -11,35 +11,22 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      debugShowCheckedModeBanner: false,
+      title: 'Flutter Basic Widgets',
       theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
-        primarySwatch: Colors.blue,
+        primarySwatch: Colors.teal,
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      initialRoute: '/',
+      routes: {
+        '/': (context) => const MyHomePage(title: 'Flutter Basic widgets'),
+        '/newScreen': (context) => const newScreen(),
+      },
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({Key? key, required this.title}) : super(key: key);
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
 
   final String title;
 
@@ -48,68 +35,203 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
-  }
+  int currentIndex = 0;
+  String buttonName = 'Open Seasame';
+  // ignore: non_constant_identifier_names
+  final Contacts = List<String>.generate(100, (index) => 'Contact $index');
 
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
     return Scaffold(
       appBar: AppBar(
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
         title: Text(widget.title),
       ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Invoke "debug painting" (press "p" in the console, choose the
-          // "Toggle Debug Paint" action from the Flutter Inspector in Android
-          // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
-          // to see the wireframe for each widget.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
+      body: currentIndex == 0
+          ? Center(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  ElevatedButton(
+                    onPressed: () => {
+                      Navigator.of(context).pushNamed('/newScreen'),
+                    },
+                    style: ElevatedButton.styleFrom(
+                        primary: const Color(0xff66BFBF),
+                        shadowColor: Colors.red.shade400),
+                    child: Text(buttonName),
+                  )
+                ],
+              ),
+            )
+          : ListView.separated(
+              padding: const EdgeInsets.all(8),
+              itemCount: Contacts.length,
+              itemBuilder: (context, index) {
+                return ListTile(
+                  leading: const Icon(Icons.person),
+                  title: Text(Contacts[index]),
+                  trailing: const Icon(Icons.view_list_outlined),
+                );
+              },
+              separatorBuilder: (BuildContext context, int index) =>
+                  const Divider(),
             ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headline4,
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {},
+        child: const Icon(Icons.yard_rounded),
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        backgroundColor: Colors.black87,
+        unselectedItemColor: const Color(0xffFFFFFF),
+        unselectedFontSize: 14,
+        selectedItemColor: Colors.deepPurpleAccent.shade700,
+        selectedFontSize: 16,
+        items: const [
+          BottomNavigationBarItem(
+            backgroundColor: Colors.white,
+            label: 'Home',
+            icon: Icon(
+              Icons.home,
+            ),
+          ),
+          BottomNavigationBarItem(
+            backgroundColor: Colors.white,
+            label: 'Profile',
+            icon: Icon(
+              Icons.person,
+            ),
+          ),
+        ],
+        currentIndex: currentIndex,
+        onTap: (int index) {
+          setState(
+            () {
+              currentIndex = index;
+            },
+          );
+        },
+      ),
+    );
+  }
+}
+
+class newScreen extends StatefulWidget {
+  const newScreen({Key? key}) : super(key: key);
+
+  @override
+  State<newScreen> createState() => _newScreenState();
+}
+
+class _newScreenState extends State<newScreen> {
+  bool isOn = false;
+  bool? isBox = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Shoutout to JWST'),
+        centerTitle: true,
+        actions: [
+          IconButton(
+            onPressed: () {},
+            icon: const Icon(Icons.info),
+          ),
+        ],
+      ),
+      body: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            isTrue(),
+            const SizedBox(
+              height: 10,
+            ),
+            const Divider(
+              height: 10,
+              color: Colors.black,
+            ),
+            Container(
+              margin: const EdgeInsets.all(10),
+              padding: const EdgeInsets.all(10),
+              width: double.infinity,
+              color: Colors.purple.shade800,
+              // ignore: prefer_const_constructors
+              child: Text(
+                textAlign: TextAlign.center,
+                'JWST is revolutionary',
+                // ignore: prefer_const_constructors
+                style: TextStyle(
+                  color: Colors.white,
+                ),
+              ),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                debugPrint('Eleveated Button');
+              },
+              child: const Text('Elevated button'),
+            ),
+            OutlinedButton(
+              onPressed: () {
+                debugPrint('Outlined Button');
+              },
+              child: const Text('Outlined button'),
+            ),
+            TextButton(
+              onPressed: () {
+                debugPrint('Text Button');
+              },
+              child: const Text('Text button'),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Icon(
+                  Icons.airplanemode_active,
+                  color: isOn ? Colors.blue : Colors.greenAccent,
+                ),
+                const Text('Row Widget'),
+                Icon(
+                  Icons.airplanemode_active,
+                  color: isOn ? Colors.green : Colors.blueAccent,
+                ),
+              ],
+            ),
+            Switch(
+              value: isOn,
+              onChanged: (bool newbool) {
+                setState(
+                  () {
+                    isOn = newbool;
+                  },
+                );
+              },
+            ),
+            Checkbox(
+              value: isBox,
+              onChanged: (bool? newBool) {
+                setState(
+                  () {
+                    isBox = newBool;
+                  },
+                );
+              },
             ),
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
     );
+  }
+
+
+  Widget isTrue(){
+    if (isBox == true) {
+    return Image.asset('images/jwst2.jpg');
+    }
+    else{
+      return Image.asset('images/jwst1.jpg');
+    }
   }
 }
